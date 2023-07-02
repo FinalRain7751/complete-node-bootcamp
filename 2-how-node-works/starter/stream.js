@@ -8,7 +8,7 @@ server.on('request', (req, res) => {
   //     res.end(data);
   //   });
   // Solution 2: Streams
-  //   const readable = fs.createReadStream('./test-file.tx');
+  //   const readable = fs.createReadStream('./test-file.txt');
   //   readable.on('data', (chunk) => {
   //     res.write(chunk);
   //   });
