@@ -37,13 +37,17 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
+// Implementing unique reviews for each user-tour combination
+// Jonas' implementation
+// reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
+// My implementation
 reviewSchema.pre('save', async function (next) {
   try {
-    const [reviewWithSameTourIdAndUserId] = await Review.find({
+    const [reviewWithSameTourIdAndUserId] = await this.constructor.find({
       tour: this.tour,
       user: this.user,
     });
-    // console.log(reviewWithSameTourIdAndUserId);
     if (reviewWithSameTourIdAndUserId) {
       next(new AppError('One user can give only one review about a tour', 400));
     }
@@ -64,6 +68,47 @@ reviewSchema.pre(/^find/, async function (next) {
 
 reviewSchema.pre(/^find/, async function (next) {
   this.select('-__v');
+  next();
+});
+
+// Static methods
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+
+  const ratingsAverage = stats.length > 0 ? stats[0].avgRating : 4.5;
+  const ratingsQuantity = stats.length > 0 ? stats[0].nRating : 0;
+
+  await Tour.findByIdAndUpdate(
+    tourId,
+    { ratingsAverage, ratingsQuantity },
+    {
+      new: true,
+      runValidators: false,
+    },
+  );
+};
+
+// For dynamically updating ratings data in tours //
+// While creating a new review
+reviewSchema.post('save', async function () {
+  // 'this' points to current review
+  await this.constructor.calcAverageRatings(this.tour);
+});
+
+// While updating or deleting a review
+reviewSchema.post(/^findOneAnd/, async function (docs, next) {
+  await docs.constructor.calcAverageRatings(docs.tour);
   next();
 });
 

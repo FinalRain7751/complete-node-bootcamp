@@ -1,8 +1,8 @@
+const AppError = require('../utils/appError');
 const Tour = require('./../models/tourModel');
 const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handlerFactory');
 // const APIFeatures = require('./../utils/apiFeatures');
-// const AppError = require('../utils/appError');
 
 exports.getAllTours = factory.getAll(Tour);
 exports.getTour = factory.getOne(Tour, { path: 'reviews' });
@@ -99,6 +99,87 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     results: plan.length,
     data: {
       plan,
+    },
+  });
+});
+
+// ('/tours-within/:distance/center/:latlng/:unit')
+// ('/tours-within/233/center/34.111745, -118.113491/km')
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  const radius = unit === 'km' ? distance / 6378.1 : distance / 3963.2;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please provide latitude and longitude in the formate lat,lng',
+        400,
+      ),
+    );
+  }
+
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      data: tours,
+    },
+  });
+});
+
+// /distances/:latlng/unit/:unit
+exports.getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  const multiplier = unit === 'km' ? 0.001 : 0.000621371;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please provide latitude and longitude in the formate lat,lng',
+        400,
+      ),
+    );
+  }
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [+lng, +lat],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        distance: { $round: ['$distance', 2] },
+        // distance: {
+        //   $function: {
+        //     body: function (distance) {
+        //       return Math.round(distance * 100) / 100;
+        //     },
+        //     args: ['$distance'],
+        //     lang: 'js',
+        //   },
+        // },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: distances,
     },
   });
 });

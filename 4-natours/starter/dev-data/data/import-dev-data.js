@@ -2,6 +2,8 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Tour = require('../../models/tourModel');
+const User = require('../../models/userModel');
+const Review = require('../../models/reviewModel');
 
 dotenv.config({ path: './config.env' });
 
@@ -22,20 +24,33 @@ mongoose
   });
 
 // Reading data from some file
-const allTours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'),
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'));
+const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
+const reviews = JSON.parse(
+  fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8'),
 );
-// console.log(allTours);
 
 // Import data into database
-const importData = async (allTours) => {
+const importData = async (tours, users, reviews) => {
   try {
-    const tours = allTours.map((tour) => {
+    const allTours = tours.map((tour) => {
       delete tour.id;
       return tour;
     });
 
-    await Tour.create(tours);
+    const allUsers = users.map((user) => {
+      delete user.id;
+      return user;
+    });
+    const allReviews = reviews.map((review) => {
+      delete review.id;
+      return review;
+    });
+
+    await Tour.create(allTours);
+    await User.create(allUsers, { validateBeforeSave: false });
+    await Review.create(allReviews);
+
     console.log('Data successfully imported');
     process.exit();
   } catch (err) {
@@ -47,6 +62,9 @@ const importData = async (allTours) => {
 const deleteData = async () => {
   try {
     await Tour.deleteMany();
+    await User.deleteMany();
+    await Review.deleteMany();
+
     console.log('Data successfully deleted');
     process.exit();
   } catch (err) {
@@ -54,7 +72,7 @@ const deleteData = async () => {
   }
 };
 
-if (process.argv[2] === '--import') importData(allTours);
+if (process.argv[2] === '--import') importData(tours, users, reviews);
 
 if (process.argv[2] === '--delete') deleteData();
 

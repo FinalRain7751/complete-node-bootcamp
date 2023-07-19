@@ -20,12 +20,12 @@ exports.deleteOne = (Model) => {
   });
 };
 
-exports.updateOne = (Model, ...fields) => {
+exports.updateOne = (Model, ...allowedFields) => {
   return catchAsync(async (req, res, next) => {
     let updateObj = {};
-    if (fields.length === 0) updateObj = req.body;
+    if (allowedFields.length === 0) updateObj = req.body;
     else {
-      fields.forEach((field) => {
+      allowedFields.forEach((field) => {
         if (req.body[field]) updateObj[field] = req.body[field];
       });
     }
@@ -63,7 +63,7 @@ exports.createOne = (Model) => {
 
 exports.getOne = (Model, popOptions) => {
   return catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
+    let query = Model.findById(req.params.id || req.user.id);
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
 
@@ -88,6 +88,9 @@ exports.getAll = (Model) => {
       .sort()
       .limitFields()
       .paginate();
+
+    // To display the query process
+    // const docs = await features.query.explain();
 
     const docs = await features.query;
 
