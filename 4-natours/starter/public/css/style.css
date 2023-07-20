@@ -1173,6 +1173,7 @@ body {
   margin-top: auto;
 }
 .card__footer-value {
+  /* margin-right: 0.5rem; */
   font-weight: 700;
 }
 .card__footer-text {
