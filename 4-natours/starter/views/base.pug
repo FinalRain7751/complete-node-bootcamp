@@ -1,24 +1,27 @@
 doctype html
 html(lang="en")
     head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        link(rel="stylesheet", href="/css/style.css")
-        link(rel="shortcut icon", href="/img/favicon.png", type="image/png")
-        link(href="https://fonts.googleapis.com/css?family=Lato:300,300i,700" rel="stylesheet")
-        //- Interpolation -- Syntax: #{JS code}
-        title Natours | #{title}
+        block head
+            meta(http-equiv="Content-Security-Policy" content="")
+            meta(charset="UTF-8")
+            meta(name="viewport", content="width=device-width, initial-scale=1.0")
+            link(rel="stylesheet", href="/css/style.css")
+            script(defer src='https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js')
+            link(rel="shortcut icon", href="/img/favicon.png", type="image/png")
+            link(href="https://fonts.googleapis.com/css?family=Lato:300,300i,700" rel="stylesheet")
+            //- Interpolation -- Syntax: #{JS code}
+            title Natours | #{title}
     body 
         //- h1= tour 
         //- //- Pug comment -- not outputted to the html file
         //- // Html comment -- Outputted to the html file as a html comment
-        
+
         //- //- Buffered code -- code that adds something to the output
         //- p= user.toUpperCase()  
 
         //- //- Unbuffered code - does not add to the output
         //- - const x = 9;
-        
+
         //- Buffered code
         //- h2= 2 + x
 
@@ -32,5 +35,4 @@ html(lang="en")
 
         // FOOTER
         include _footer
-        
-        
+

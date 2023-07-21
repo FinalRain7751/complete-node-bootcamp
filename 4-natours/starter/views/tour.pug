@@ -2,6 +2,15 @@ extends base
 
 include _reviewCard
 
+block append head
+    link(rel="stylesheet" href='/leaflet/leaflet.css')
+    script(defer src='/leaflet/leaflet.js')
+    script(defer src="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.1/maptiler-sdk.umd.js")
+    link(href="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.1/maptiler-sdk.css" rel="stylesheet")
+    script(defer src="https://cdn.maptiler.com/leaflet-maptilersdk/v1.0.0/leaflet-maptilersdk.js")
+    script(defer src='/js/map.js')
+
+
 mixin overviewBox(label, text, icon)
     .overview-box__detail
         svg.overview-box__icon
@@ -72,7 +81,7 @@ block content
 
 
     section.section-map
-        #map
+        #map(data-locations=`${JSON.stringify(tour.locations)}`)
 
     section.section-reviews
         .reviews
