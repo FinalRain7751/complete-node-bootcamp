@@ -3,15 +3,27 @@
   "version": "1.0.0",
   "description": "Learning node, express and mongoDB",
   "main": "app.js",
+  "frontend": "./public/js/bundle.js",
+  "targets": {
+    "main": false,
+    "frontend": {
+      "source": "./public/js/index.js"
+    }
+  },
   "scripts": {
     "start:dev": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js",
-    "connect-db": "mongosh 'mongodb+srv://natoursdb.khle57u.mongodb.net/natours' --apiVersion 1 --username finalrain7751 --password lHAfrpXWzIh5C0se"
+    "connect-db": "mongosh 'mongodb+srv://natoursdb.khle57u.mongodb.net/natours' --apiVersion 1 --username finalrain7751 --password lHAfrpXWzIh5C0se",
+    "watch:js": "parcel watch",
+    "build:js": "parcel build"
   },
   "author": "S Sen",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@maptiler/sdk": "^1.1.1",
+    "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
@@ -40,6 +52,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
+    "parcel": "^2.9.3",
     "prettier": "^3.0.0"
   },
   "engines": {

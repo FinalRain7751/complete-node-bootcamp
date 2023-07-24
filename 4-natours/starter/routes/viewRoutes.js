@@ -1,7 +1,8 @@
 const express = require('express');
-const router = express.Router();
-const viewController = require('../controllers/viewsController');
+const viewsController = require('../controllers/viewsController');
 const authcontroller = require('../controllers/authController');
+
+const router = express.Router();
 
 // router.get('/', (req, res) => {
 //   res.status(200).render('base', {
@@ -10,8 +11,10 @@ const authcontroller = require('../controllers/authController');
 //   });
 // });
 
-router.get('/', viewController.getOverview);
-router.get('/tour/:slug', authcontroller.protect, viewController.getTour);
-router.get('/login', viewController.getLoginForm);
+router.use(authcontroller.isLoggedIn);
+
+router.get('/', viewsController.getOverview);
+router.get('/tour/:slug', viewsController.getTour);
+router.get('/login', viewsController.getLoginForm);
 
 module.exports = router;
