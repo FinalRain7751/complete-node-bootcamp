@@ -11,10 +11,9 @@ const router = express.Router();
 //   });
 // });
 
-router.use(authcontroller.isLoggedIn);
-
-router.get('/', viewsController.getOverview);
-router.get('/tour/:slug', viewsController.getTour);
-router.get('/login', viewsController.getLoginForm);
+router.get('/', authcontroller.isLoggedIn, viewsController.getOverview);
+router.get('/tour/:slug', authcontroller.isLoggedIn, viewsController.getTour);
+router.get('/login', authcontroller.isLoggedIn, viewsController.getLoginForm);
+router.get('/me', authcontroller.protect, viewsController.getAccount);
 
 module.exports = router;
