@@ -26,7 +26,11 @@ app.set('views', path.join(__dirname, 'views'));
 
 // 1) GLOBAL MIDDLEWARES
 // Set security http headers
-// app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
@@ -48,6 +52,7 @@ app.use(
     limit: '10kb',
   }),
 );
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection

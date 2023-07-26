@@ -241,12 +241,12 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id).select('+password');
 
   // 2) Check if POSTed password correct
-  const { oldPassword, newPassword, newPasswordConfirm } = req.body;
+  const { currentPassword, newPassword, newPasswordConfirm } = req.body;
   console.log(user.password);
-  if (!(await user.correctPassword(oldPassword, user.password)))
+  if (!(await user.correctPassword(currentPassword, user.password)))
     return next(
       new AppError(
-        'The old password entered is not correct. Kindly enter correct password.',
+        'The current password entered is not correct. Kindly enter correct password.',
         401,
       ),
     );
