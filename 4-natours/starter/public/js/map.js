@@ -1,5 +1,7 @@
 'use strict';
 
+// import { Point } from '@maptiler/sdk';
+
 const L = require('../../node_modules/leaflet/dist/leaflet');
 
 const bringPopupToFront = function (e) {
@@ -12,7 +14,9 @@ export const displayMap = (locations) => {
     zoomControl: false,
     closePopupOnClick: false,
     scrollWheelZoom: false,
-  });
+    // zoom: 1,
+    zoomAnimationThreshold: 20,
+  }).setView([0, 0], 0);
 
   L.tileLayer(
     'https://api.maptiler.com/maps/dataviz/{z}/{x}/{y}.png?key=qdEkSuB4INzAuV7cx10X',
@@ -43,6 +47,8 @@ export const displayMap = (locations) => {
       content: `<span class='mapboxgl-popup-content'>Day ${location.day}: ${location.description}</span>`,
       className: 'mapboxgl-popup ',
       interactive: true,
+      autoPan: true,
+      autoPanPadding: [20, 20],
     }).openOn(map);
 
     L.marker([lat, lng], {
@@ -56,11 +62,10 @@ export const displayMap = (locations) => {
   });
 
   // Bounding the map to the locations on the tour
-  const latlngBound = L.latLngBounds(bounds);
+  const latlngBound = L.latLngBounds(bounds).pad(0.4);
   map.fitBounds(latlngBound, {
     animate: true,
-    duration: 3,
-    padding: [100, 100],
+    duration: 0.9,
     noMoveStart: false,
   });
 };

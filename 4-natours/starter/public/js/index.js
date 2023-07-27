@@ -2,6 +2,7 @@ import 'core-js/stable';
 import { login, logout } from './login';
 import { displayMap } from './map';
 import { updateSettings } from './updateSettings';
+export const URL = 'http://localhost:8000';
 
 console.log('Hello from parcel');
 
@@ -39,9 +40,13 @@ if (logOutBtn) {
 if (updateUserDataForm) {
   updateUserDataForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const name = updateUserDataForm.querySelector('#name').value;
-    const email = updateUserDataForm.querySelector('#email').value;
-    updateSettings({ name, email }, 'data');
+    const form = new FormData();
+    form.append('name', updateUserDataForm.querySelector('#name').value);
+    form.append('email', updateUserDataForm.querySelector('#email').value);
+    form.append('photo', updateUserDataForm.querySelector('#photo').files[0]);
+    console.log(form);
+
+    updateSettings(form, 'data');
   });
 }
 
