@@ -2,6 +2,7 @@ import 'core-js/stable';
 import { login, logout } from './login';
 import { displayMap } from './map';
 import { updateSettings } from './updateSettings';
+import { bookTour } from './stripe';
 export const URL = 'http://localhost:8000';
 
 console.log('Hello from parcel');
@@ -16,6 +17,7 @@ const loginForm = document.querySelector('.form--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const updateUserDataForm = document.querySelector('.form-user-data');
 const updateUserPasswordForm = document.querySelector('.form-user-password');
+const bookTourBtn = document.querySelector('#book-tour');
 
 // DELEGATION
 if (map) {
@@ -69,5 +71,14 @@ if (updateUserPasswordForm) {
     updateUserPasswordForm.querySelector('#password-confirm').value = '';
 
     document.querySelector('.btn--save-password').textContent = 'Updating...';
+  });
+}
+
+if (bookTourBtn) {
+  bookTourBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.target.textContent = 'Processing...';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
   });
 }

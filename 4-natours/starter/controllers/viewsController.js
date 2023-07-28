@@ -26,6 +26,11 @@ exports.getTour = catchAsync(async (req, res, next) => {
     return next(new AppError('There is no tour with that name.', 404));
   }
 
+  // tour.reviews.forEach((review) => {
+  //   console.log(review.id);
+  //   console.log(review.user.photo);
+  // });
+
   res.status(200).render('tour', {
     title: tour.name,
     tour,
